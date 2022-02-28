@@ -11,11 +11,8 @@ const userController = {
     },
     getUserById({ params }, res) {
         User.findOne({_id: params.id})
-        .populate({
-            path: 'Thoughts',
-            select: '-__v'
-        })
-        .select('-__v').then(dbUserData => res.json(dbUserData)).catch(
+        
+        .then(dbUserData => res.json(dbUserData)).catch(
             err => {
                 console.log(err);
                 res.sendStatus(400);
