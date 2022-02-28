@@ -2,20 +2,26 @@ const { User } = require('../models')
 
 const userController = {
     getAllUsers(req, res) {
-        User.find({}).then(dbUserData => res.json(dbUserData)).catch(err=>{
+        User.find({}).select('-__v')
+        .sort({ _id: -1})
+        .then(dbUserData => res.json(dbUserData)).catch(err=>{
             console.log(err);
             res.status(400).json(err)
         })
     },
     getUserById({ params }, res) {
         User.findOne({_id: params.id})
+        .populate({
+            path: 'Thoughts',
+            select: '-__v'
+        })
         .select('-__v').then(dbUserData => res.json(dbUserData)).catch(
             err => {
                 console.log(err);
                 res.sendStatus(400);
             });
     },
-    updateUser({ params, body }, body, res) {
+    updateUser({ params, body }, res) {
         User.findOneAndUpdate({_id: params.id }, body, { new: true }).then(dbUserData => {
             if (!dbUserData) {
                 res.status(404).json({ message: 'no user found by this id' });
